@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Lyvo — property management &amp; rentals for Namibia | Coming soon</title>
+<meta name="description" content="The all-in-one property platform for Namibia — list, screen tenants, sign compliant leases, collect rent and unlock financing. Join the waitlist." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e'};</script>
+<style>
+  :root{
+    --bg:#0F0F10; --surface:#1A1A1C; --surface-2:#212123;
+    --text:#F7F3EB; --muted:#B8B1A6; --faint:rgba(184,177,166,.5);
+    --gold:#C9A96E; --gold-deep:#B8965A; --gold-soft:rgba(201,169,110,.12);
+    --line:rgba(184,177,166,.16); --line-2:rgba(184,177,166,.30);
+    --green:#5BB98C; --blue:#84B4C8;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Schibsted Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden;}
+  ::selection{background:var(--gold);color:#0F0F10;}
+  .serif{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
+  a{color:inherit;text-decoration:none;}
+  /* glow */
+  .glow{position:fixed;width:70vw;max-width:760px;aspect-ratio:1;border-radius:50%;top:-25%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(201,169,110,.12),transparent 62%);pointer-events:none;z-index:0;}
+  header{position:relative;z-index:2;}
+  .head-in{display:flex;align-items:center;justify-content:space-between;padding:22px 0;}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:22px;letter-spacing:-.02em;}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(150deg,#26221b,#0F0F10);border:1px solid var(--line-2);display:grid;place-items:center;}
+  .logo svg{width:20px;height:20px;}
+  .badge{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:100px;padding:3px 9px;}
+  /* hero */
+  .hero{position:relative;z-index:2;text-align:center;padding:clamp(40px,8vw,90px) 0 30px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-soft);border:1px solid var(--line-2);padding:7px 15px;border-radius:100px;margin-bottom:26px;}
+  .eyebrow .pd{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--gold-soft);}
+  h1{margin:0;font-weight:800;letter-spacing:-.04em;line-height:1.0;font-size:clamp(42px,7vw,76px);}
+  h1 .serif{color:var(--gold);font-weight:400;letter-spacing:-.01em;}
+  .lede{margin:24px auto 0;max-width:46ch;font-size:clamp(17px,2.1vw,20px);color:var(--muted);text-wrap:pretty;}
+  /* waitlist card */
+  .join{position:relative;z-index:2;max-width:520px;margin:38px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.45);}
+  .join h2{margin:0 0 4px;font-size:18px;font-weight:800;letter-spacing:-.02em;}
+  .join p{margin:0 0 16px;color:var(--muted);font-size:13.5px;}
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .role{font:inherit;text-align:left;background:var(--surface-2);border:1.5px solid var(--line-2);border-radius:14px;padding:14px;cursor:pointer;color:var(--text);transition:.15s;}
+  .role .rt{font-weight:800;font-size:15px;}
+  .role .rs{font-size:12px;color:var(--muted);margin-top:2px;}
+  .role.sel{border-color:var(--gold);background:var(--gold-soft);}
+  .role .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(201,169,110,.14);margin-bottom:9px;}
+  .role .ic svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.8;}
+  .field{margin-bottom:11px;}
+  .field input{width:100%;font:inherit;font-size:15px;padding:14px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);}
+  .field input::placeholder{color:var(--faint);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .btn{font:inherit;font-weight:800;font-size:15px;border:0;border-radius:13px;padding:15px;cursor:pointer;width:100%;background:var(--gold);color:#0F0F10;transition:.15s;}
+  .btn:hover{background:var(--gold-deep);}
+  .btn:disabled{opacity:.5;cursor:default;}
+  .fineprint{font-size:11.5px;color:var(--faint);text-align:center;margin-top:12px;}
+  .ok{text-align:center;padding:10px 6px;}
+  .ok .check{width:54px;height:54px;border-radius:50%;background:rgba(91,185,140,.16);color:var(--green);display:grid;place-items:center;margin:0 auto 14px;font-size:26px;}
+  .ok h2{font-size:20px;margin:0 0 6px;}
+  .ok p{color:var(--muted);}
+  /* features */
+  .features{position:relative;z-index:2;padding:clamp(50px,8vw,90px) 0 30px;}
+  .sec-tag{text-align:center;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .sec-h{text-align:center;font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.03em;margin:0 0 8px;}
+  .sec-h .serif{color:var(--gold);}
+  .sec-sub{text-align:center;color:var(--muted);max-width:54ch;margin:0 auto 40px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .col{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:30px;}
+  .col .ctag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:100px;margin-bottom:18px;}
+  .col.ll .ctag{background:var(--gold-soft);color:var(--gold);}
+  .col.tn .ctag{background:rgba(132,180,200,.14);color:var(--blue);}
+  .col h3{margin:0 0 18px;font-size:22px;font-weight:800;letter-spacing:-.02em;}
+  .feat{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+  .feat:last-child{border-bottom:0;}
+  .feat svg{width:20px;height:20px;flex:none;margin-top:2px;stroke:var(--gold);fill:none;stroke-width:2;}
+  .col.tn .feat svg{stroke:var(--blue);}
+  .feat b{font-weight:700;font-size:15px;}
+  .feat span{display:block;color:var(--muted);font-size:13px;margin-top:1px;}
+  /* core strip */
+  .core{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px;}
+  .core div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;font-size:13.5px;font-weight:600;}
+  .core .k{color:var(--gold);font-weight:800;display:block;margin-bottom:3px;font-size:13px;}
+  /* footer */
+  footer{position:relative;z-index:2;text-align:center;padding:56px 0 50px;color:var(--muted);}
+  .markets{display:flex;gap:10px 22px;justify-content:center;flex-wrap:wrap;font-weight:700;color:var(--text);margin:14px 0 22px;}
+  .markets span{color:var(--muted);font-weight:600;}
+  .tiny{font-size:12.5px;color:var(--faint);}
+  @media (max-width:780px){ .cols{grid-template-columns:1fr;} .core{grid-template-columns:1fr 1fr;} }
+  @media (max-width:440px){ .roles,.grid2{grid-template-columns:1fr;} .core{grid-template-columns:1fr;} }
+</style>
+<link rel="canonical" href="https://ly-vo.com/" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#0F0F10" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Lyvo" />
+<meta property="og:title" content="Lyvo — property management & rentals for Namibia" />
+<meta property="og:description" content="The all-in-one property platform for Namibia — list, screen, lease, collect rent and unlock financing. Join the waitlist." />
+<meta property="og:url" content="https://ly-vo.com/" />
+<meta property="og:image" content="https://ly-vo.com/og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Lyvo — property management & rentals for Namibia" />
+<meta name="twitter:description" content="List, screen, lease, collect rent and unlock financing — one platform. Join the waitlist." />
+<meta name="twitter:image" content="https://ly-vo.com/og.jpg" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Lyvo","url":"https://ly-vo.com/","logo":"https://ly-vo.com/favicon.svg","description":"The all-in-one property operating and financing platform for Namibia.","areaServed":"NA"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Lyvo","url":"https://ly-vo.com/"}
+</script>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+  <header><div class="head-in">
+    <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 5l8 6.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10.5V19h12v-8.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19v-4h4v4" stroke="#F7F3EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Lyvo</div>
+    <nav style="display:flex;align-items:center;gap:18px"><a href="blog/" style="font-size:14px;font-weight:600;color:var(--muted)">Blog</a><span class="badge">Coming soon</span></nav>
+  </div></header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="pd"></span>The all-in-one property platform</span>
+    <h1>Property, the way<br>it <span class="serif">should feel.</span></h1>
+    <p class="lede">One platform to list, screen, lease, collect rent and unlock capital — and for tenants to find verified homes and be rewarded for renting. Launching soon.</p>
+  </section>
+
+  <!-- waitlist -->
+  <div class="join" id="join">
+    <h2>Join the waitlist</h2>
+    <p>Be first in when Lyvo opens in your city. No spam — just your invite.</p>
+    <div class="roles">
+      <button class="role" id="role-landlord" onclick="pickRole('landlord')">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></div>
+        <div class="rt">I'm a landlord</div><div class="rs">List &amp; manage property</div>
+      </button>
+      <button class="role" id="role-tenant" onclick="pickRole('tenant')">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></div>
+        <div class="rt">I'm a tenant</div><div class="rs">Find &amp; rent a home</div>
+      </button>
+    </div>
+    <div class="field"><input id="w_email" type="email" placeholder="Email address" autocomplete="email"></div>
+    <div class="grid2">
+      <div class="field"><input id="w_name" placeholder="Name (optional)"></div>
+      <div class="field"><input id="w_city" placeholder="City (optional)"></div>
+    </div>
+    <button class="btn" id="w_btn" onclick="joinWaitlist()">Join the waitlist</button>
+    <div class="fineprint">Pick landlord or tenant above · we'll email you at launch.</div>
+  </div>
+
+  <!-- features -->
+  <section class="features">
+    <div class="sec-tag">Everything, in one place</div>
+    <h2 class="sec-h">What's <span class="serif">coming.</span></h2>
+    <p class="sec-sub">A full property operating &amp; financing platform — built for African rails and realities, with verified trust on both sides of the lease.</p>
+
+    <div class="cols">
+      <div class="col ll">
+        <span class="ctag">For landlords &amp; managers</span>
+        <h3>Run a tighter portfolio</h3>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Portfolio dashboard</b><span>Occupancy, rent status, arrears &amp; cash flow at a glance</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Tenant screening &amp; interviews</b><span>Verify ID/income, KYB for businesses, structured decisions</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Multi-channel rent collection</b><span>Bank · mobile money · card, auto-reconciled</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Compliant digital leases &amp; e-sign</b><span>Generated per your country's rental law</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Condition reports &amp; maintenance</b><span>Photo inspections, technician tracking, service history</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Cash-flow financing</b><span>Advances, renovation &amp; commercial lease-backed capital</span></div></div>
+      </div>
+      <div class="col tn">
+        <span class="ctag">For tenants</span>
+        <h3>Rent that rewards you</h3>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Verified marketplace</b><span>Ownership-checked homes &amp; spaces — short, mid &amp; long-term</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Apply once</b><span>A portable trust profile you reuse across landlords</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>The Lyvo Card</b><span>Pay rent, earn rewards &amp; build credit toward a home</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Two-way ratings</b><span>Rate your landlord — honest reviews, both sides</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Your lease &amp; documents</b><span>Everything in one place, signed and secure</span></div></div>
+        <div class="feat"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><div><b>Transparent, fast</b><span>Quick responses and clear status on every application</span></div></div>
+      </div>
+    </div>
+
+    <div class="core">
+      <div><span class="k">Verified trust</span>Admin-checked ownership before any listing goes live</div>
+      <div><span class="k">Both sides</span>Portable, two-way reputation for landlords &amp; tenants</div>
+      <div><span class="k">Local rails</span>Bank, mobile money &amp; card built for the region</div>
+      <div><span class="k">Multi-currency</span>N$ · MT · K · P, per market</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="markets">Launching in <span style="font-size:19px">🇳🇦</span> Namibia <span>·</span> <span style="font-size:19px">🇲🇿</span> Mozambique <span>·</span> <span style="font-size:19px">🇿🇲</span> Zambia <span>·</span> <span style="font-size:19px">🇧🇼</span> Botswana</div>
+    <div class="tiny">© <span id="yr">2026</span> Lyvo. All rights reserved.</div>
+  </footer>
+</div>
+
+<script>
+  const sb = supabase.createClient(window.LYVO_CONFIG.SUPABASE_URL, window.LYVO_CONFIG.SUPABASE_PUBLISHABLE_KEY);
+  try{ document.getElementById('yr').textContent = new Date().getFullYear(); }catch(e){}
+  let role = null;
+  function pickRole(r){
+    role = r;
+    document.getElementById('role-landlord').classList.toggle('sel', r==='landlord');
+    document.getElementById('role-tenant').classList.toggle('sel', r==='tenant');
+  }
+  function valid(email){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
+  async function joinWaitlist(){
+    const email=document.getElementById('w_email').value.trim();
+    const name=document.getElementById('w_name').value.trim();
+    const city=document.getElementById('w_city').value.trim();
+    const btn=document.getElementById('w_btn');
+    if(!role){ flash('Choose landlord or tenant first'); return; }
+    if(!valid(email)){ flash('Enter a valid email'); return; }
+    btn.disabled=true; btn.textContent='Joining…';
+    const { error } = await sb.from('waitlist').insert({ email, role, full_name:name||null, city:city||null });
+    if(error && error.code!=='23505'){ btn.disabled=false; btn.textContent='Join the waitlist'; flash(error.message); return; }
+    success(email, role, error && error.code==='23505');
+  }
+  function flash(msg){ const b=document.getElementById('w_btn'); b.textContent=msg; setTimeout(()=>{ if(b.textContent===msg) b.textContent='Join the waitlist'; },2200); }
+  function success(email, r, already){
+    document.getElementById('join').innerHTML =
+      '<div class="ok"><div class="check">✓</div>'+
+      '<h2>'+(already?'You\'re already on the list':'You\'re on the list')+'</h2>'+
+      '<p>We\'ll email <b style="color:var(--text)">'+email+'</b> when Lyvo opens for '+(r==='landlord'?'landlords':'tenants')+' in your city.</p></div>';
+  }
+</script>
+</body>
+</html>
