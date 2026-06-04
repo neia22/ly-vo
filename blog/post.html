@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lyvo Blog</title>
 <meta name="description" content="" />
-<link rel="canonical" href="https://ly-vo.com/blog/" />
+<link rel="canonical" href="https://ly-vo.app/blog/" />
 <meta property="og:type" content="article" />
 <meta property="og:site_name" content="Lyvo" />
-<meta property="og:image" content="https://ly-vo.com/og.jpg" />
+<meta property="og:image" content="https://ly-vo.app/og.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://ly-vo.com/og.jpg" />
+<meta name="twitter:image" content="https://ly-vo.app/og.jpg" />
 <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 <meta name="theme-color" content="#0F0F10" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -56,7 +56,7 @@ function setOG(prop,val){let el=document.head.querySelector(`meta[property="${pr
     if(error) throw error;
     if(!p){ art.innerHTML='<p class="breadcrumb" style="padding-top:30px"><a href="index.html">← Blog</a></p><h1>Post not found</h1><p style="color:var(--muted)">This article may have moved or isn’t published yet.</p>'; document.title='Post not found — Lyvo'; return; }
 
-    const url='https://ly-vo.com/blog/post.html?slug='+encodeURIComponent(p.slug);
+    const url='https://ly-vo.app/blog/post.html?slug='+encodeURIComponent(p.slug);
     const desc=p.meta_description||p.excerpt||'';
     document.title=p.title+' | Lyvo';
     setMeta('meta[name="description"]','content',desc);
@@ -64,7 +64,7 @@ function setOG(prop,val){let el=document.head.querySelector(`meta[property="${pr
     setOG('og:title',p.title); setOG('og:description',desc); setOG('og:url',url);
     setMeta('meta[name="twitter:title"]','content',p.title);
     const ld=document.createElement('script'); ld.type='application/ld+json';
-    ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":p.title,"description":desc,"datePublished":p.published_at,"dateModified":p.updated_at,"author":{"@type":"Organization","name":p.author||"Lyvo"},"publisher":{"@type":"Organization","name":"Lyvo","url":"https://ly-vo.com/"},"mainEntityOfPage":{"@type":"WebPage","@id":url}});
+    ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":p.title,"description":desc,"datePublished":p.published_at,"dateModified":p.updated_at,"author":{"@type":"Organization","name":p.author||"Lyvo"},"publisher":{"@type":"Organization","name":"Lyvo","url":"https://ly-vo.app/"},"mainEntityOfPage":{"@type":"WebPage","@id":url}});
     document.head.appendChild(ld);
 
     art.innerHTML=`
