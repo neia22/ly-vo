@@ -145,7 +145,7 @@
     <div class="field"><input id="w_email" type="email" placeholder="your email" autocomplete="email"></div>
     <div class="grid2">
       <div class="field"><input id="w_name" placeholder="first name (optional)"></div>
-      <div class="field"><input id="w_city" placeholder="your city (optional)"></div>
+      <div class="field"><input id="w_country" placeholder="your country (optional)"></div>
     </div>
     <button class="btn" id="w_btn" onclick="joinWaitlist()">count me in ✨</button>
     <div class="fineprint">pick your vibe above · we’ll slide into your inbox at launch.</div>
@@ -207,23 +207,23 @@
   async function joinWaitlist(){
     const email=document.getElementById('w_email').value.trim();
     const name=document.getElementById('w_name').value.trim();
-    const city=document.getElementById('w_city').value.trim();
+    const country=document.getElementById('w_country').value.trim();
     const btn=document.getElementById('w_btn');
     if(!role){ flash('pick landlord or renter first 💕'); return; }
     if(!valid(email)){ flash('hmm, that email looks off'); return; }
     btn.disabled=true; btn.textContent='adding you…';
-    const { error } = await sb.from('waitlist').insert({ email, role, full_name:name||null, city:city||null });
+    const { error } = await sb.from('waitlist').insert({ email, role, full_name:name||null, country:country||null });
     if(error && error.code!=='23505'){ btn.disabled=false; btn.textContent='count me in ✨'; flash(error.message); return; }
-    hubspotSubmit(email, role, name, city);
+    hubspotSubmit(email, role, name, country);
     success(email, role, error && error.code==='23505');
   }
-  async function hubspotSubmit(email, role, name, city){
+  async function hubspotSubmit(email, role, name, country){
     try{
       const c=window.LYVO_CONFIG;
       if(!c.HUBSPOT_PORTAL_ID || !c.HUBSPOT_FORM_GUID) return;   // no-op until configured
       const fields=[{name:'email',value:email}];
       if(name) fields.push({name:'firstname',value:name});
-      if(city) fields.push({name:'city',value:city});
+      if(country) fields.push({name:'country',value:country});
       if(c.HUBSPOT_ROLE_FIELD && role) fields.push({name:c.HUBSPOT_ROLE_FIELD,value:(c.HUBSPOT_ROLE_MAP&&c.HUBSPOT_ROLE_MAP[role])||role});
       const host=(c.HUBSPOT_REGION && c.HUBSPOT_REGION!=='na1') ? 'api-'+c.HUBSPOT_REGION+'.hsforms.com' : 'api.hsforms.com';
       await fetch('https://'+host+'/submissions/v3/integration/submit/'+c.HUBSPOT_PORTAL_ID+'/'+c.HUBSPOT_FORM_GUID,{
