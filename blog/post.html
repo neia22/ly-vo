@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lyvo Blog</title>
+<meta name="description" content="" />
+<link rel="canonical" href="https://ly-vo.com/blog/" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Lyvo" />
+<meta property="og:image" content="https://ly-vo.com/og.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://ly-vo.com/og.jpg" />
+<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#0F0F10" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e'};</script>
+</head>
+<body>
+<header class="site"><div class="nav-in">
+  <a class="brand" href="../"><span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 5l8 6.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10.5V19h12v-8.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19v-4h4v4" stroke="#F7F3EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Lyvo</a>
+  <div class="nav-right"><a href="index.html">Blog</a><a class="nav-cta" href="../#join">Join the waitlist</a></div>
+</div></header>
+
+<main class="prose-wrap">
+  <article class="post" id="article" style="min-height:50vh">
+    <p class="breadcrumb" style="padding-top:30px"><a href="index.html">Blog</a> · Loading…</p>
+  </article>
+</main>
+
+<footer class="site"><div class="foot-in">
+  <span>© <span id="yr">2026</span> Lyvo</span>
+  <span><a href="index.html">← More articles</a></span>
+</div></footer>
+
+<script>
+try{document.getElementById('yr').textContent=new Date().getFullYear();}catch(e){}
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
+function setMeta(sel,attr,val){let el=document.head.querySelector(sel);if(el)el.setAttribute(attr,val);}
+function setOG(prop,val){let el=document.head.querySelector(`meta[property="${prop}"]`);if(!el){el=document.createElement('meta');el.setAttribute('property',prop);document.head.appendChild(el);}el.setAttribute('content',val);}
+
+(async()=>{
+  const art=document.getElementById('article');
+  const slug=new URLSearchParams(location.search).get('slug');
+  if(!slug){ art.innerHTML='<p class="breadcrumb" style="padding-top:30px"><a href="index.html">← Blog</a></p><h1>Post not found</h1>'; return; }
+  try{
+    const c=window.LYVO_CONFIG;
+    const sb=window.supabase.createClient(c.SUPABASE_URL,c.SUPABASE_PUBLISHABLE_KEY);
+    const {data:p,error}=await sb.from('blog_posts')
+      .select('slug,title,excerpt,body_html,meta_description,category,read_minutes,author,published_at,updated_at')
+      .eq('slug',slug).eq('status','published').maybeSingle();
+    if(error) throw error;
+    if(!p){ art.innerHTML='<p class="breadcrumb" style="padding-top:30px"><a href="index.html">← Blog</a></p><h1>Post not found</h1><p style="color:var(--muted)">This article may have moved or isn’t published yet.</p>'; document.title='Post not found — Lyvo'; return; }
+
+    const url='https://ly-vo.com/blog/post.html?slug='+encodeURIComponent(p.slug);
+    const desc=p.meta_description||p.excerpt||'';
+    document.title=p.title+' | Lyvo';
+    setMeta('meta[name="description"]','content',desc);
+    setMeta('link[rel="canonical"]','href',url);
+    setOG('og:title',p.title); setOG('og:description',desc); setOG('og:url',url);
+    setMeta('meta[name="twitter:title"]','content',p.title);
+    const ld=document.createElement('script'); ld.type='application/ld+json';
+    ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Article","headline":p.title,"description":desc,"datePublished":p.published_at,"dateModified":p.updated_at,"author":{"@type":"Organization","name":p.author||"Lyvo"},"publisher":{"@type":"Organization","name":"Lyvo","url":"https://ly-vo.com/"},"mainEntityOfPage":{"@type":"WebPage","@id":url}});
+    document.head.appendChild(ld);
+
+    art.innerHTML=`
+      <div class="breadcrumb"><a href="index.html">Blog</a> · ${esc(p.category)}</div>
+      <span class="cat">${esc(p.category)}</span>
+      <h1>${esc(p.title)}</h1>
+      ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:''}
+      <div class="meta"><span class="av">L</span> ${esc(p.author||'Lyvo')} · <time datetime="${p.published_at||''}">${fmt(p.published_at)}</time> · ${p.read_minutes||5} min read</div>
+      <div class="prose" id="body"></div>
+      <div class="cta">
+        <h3>Property, the way it <span class="serif">should feel.</span></h3>
+        <p>Lyvo is launching in Namibia. Join the waitlist for early access.</p>
+        <a href="../#join">Join the waitlist</a>
+      </div>`;
+    document.getElementById('body').innerHTML=p.body_html||'';
+  }catch(e){
+    art.innerHTML='<p class="breadcrumb" style="padding-top:30px"><a href="index.html">← Blog</a></p><h1>Couldn’t load this article</h1>';
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>

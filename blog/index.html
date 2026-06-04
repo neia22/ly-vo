@@ -9,21 +9,28 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Lyvo" />
 <meta property="og:title" content="Lyvo Blog — renting, letting & property guides" />
-<meta property="og:description" content="Practical guides for landlords and tenants in Namibia and Southern Africa." />
+<meta property="og:description" content="Practical guides for landlords and tenants in Namibia." />
 <meta property="og:url" content="https://ly-vo.com/blog/" />
+<meta property="og:image" content="https://ly-vo.com/og.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://ly-vo.com/og.jpg" />
+<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#0F0F10" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Blog","name":"Lyvo Blog","url":"https://ly-vo.com/blog/","publisher":{"@type":"Organization","name":"Lyvo","url":"https://ly-vo.com/"}}
 </script>
-<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-<meta name="theme-color" content="#0F0F10" />
-<meta property="og:image" content="https://ly-vo.com/og.jpg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:image" content="https://ly-vo.com/og.jpg" />
+<style>
+  .cover-emoji{position:absolute;inset:0;display:grid;place-items:center;font-size:54px;opacity:.92;}
+  .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line-2);border-radius:18px;}
+  .empty .big{font-size:42px;margin-bottom:10px;}
+  .empty h2{color:var(--text);font-size:22px;margin:0 0 6px;font-weight:800;}
+  .skel{grid-column:1/-1;text-align:center;padding:50px;color:var(--faint);}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e'};</script>
 </head>
 <body>
 <header class="site"><div class="nav-in">
@@ -35,33 +42,50 @@
   <section class="blog-hero">
     <div class="eyebrow">The Lyvo Blog</div>
     <h1>Renting &amp; letting, <span class="serif">made clear.</span></h1>
-    <p>No-nonsense guides for landlords and tenants — screening, deposits, compliant leases and getting paid — written for <strong style="color:var(--text)">Namibia</strong> 🇳🇦 and across Southern Africa.</p>
+    <p>No-nonsense guides for landlords and tenants — screening, deposits, compliant leases and getting paid — written for <strong style="color:var(--text)">Namibia</strong> 🇳🇦.</p>
   </section>
 
-  <section class="posts">
-    <a class="post-card" href="tenant-screening-namibia.html">
-      <div class="cover"><span class="cat">For landlords</span></div>
-      <div class="body">
-        <h2>How to screen tenants in Namibia: a 2026 landlord's guide</h2>
-        <p>Verify identity and income, check references, assess affordability and spot the red flags — without slowing down good applicants.</p>
-        <div class="meta">8 min read · Landlord guide</div>
-      </div>
-    </a>
-    <a class="post-card" href="property-management-platform.html">
-      <div class="cover"><span class="cat">Product</span></div>
-      <div class="body">
-        <h2>What is a property management platform — and do you need one?</h2>
-        <p>From spreadsheets and WhatsApp to one system for listings, screening, leases and rent. What it is and when it pays off.</p>
-        <div class="meta">6 min read · Explainer</div>
-      </div>
-    </a>
+  <section class="posts" id="posts">
+    <div class="skel">Loading articles…</div>
   </section>
 </main>
 
 <footer class="site"><div class="foot-in">
-  <span>© <span id="yr">2026</span> Lyvo · Launching in Namibia 🇳🇦 &amp; Southern Africa</span>
+  <span>© <span id="yr">2026</span> Lyvo · Launching in Namibia 🇳🇦</span>
   <span><a href="../#join">Join the waitlist →</a></span>
 </div></footer>
-<script>try{document.getElementById('yr').textContent=new Date().getFullYear();}catch(e){}</script>
+
+<script>
+try{document.getElementById('yr').textContent=new Date().getFullYear();}catch(e){}
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
+(async()=>{
+  const box=document.getElementById('posts');
+  try{
+    const c=window.LYVO_CONFIG;
+    const sb=window.supabase.createClient(c.SUPABASE_URL,c.SUPABASE_PUBLISHABLE_KEY);
+    const {data,error}=await sb.from('blog_posts')
+      .select('slug,title,excerpt,category,cover_emoji,read_minutes,published_at')
+      .eq('status','published').order('published_at',{ascending:false});
+    if(error) throw error;
+    if(!data||!data.length){
+      box.innerHTML='<div class="empty"><div class="big">📝</div><h2>No articles yet</h2><p>We’re busy writing. Check back soon — or join the waitlist to hear first.</p></div>';
+      return;
+    }
+    box.innerHTML=data.map(p=>`
+      <a class="post-card" href="post.html?slug=${encodeURIComponent(p.slug)}">
+        <div class="cover"><span class="cat">${esc(p.category)}</span><span class="cover-emoji">${esc(p.cover_emoji)||'📝'}</span></div>
+        <div class="body">
+          <h2>${esc(p.title)}</h2>
+          <p>${esc(p.excerpt)}</p>
+          <div class="meta">${p.read_minutes||5} min read · ${fmt(p.published_at)}</div>
+        </div>
+      </a>`).join('');
+  }catch(e){
+    box.innerHTML='<div class="empty"><h2>Couldn’t load articles</h2><p>Please try again shortly.</p></div>';
+    console.error(e);
+  }
+})();
+</script>
 </body>
 </html>

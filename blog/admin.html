@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog Admin — Lyvo</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e'};</script>
+<style>
+  :root{--bg:#0F0F10;--surface:#1A1A1C;--surface-2:#212123;--text:#F7F3EB;--muted:#B8B1A6;--faint:rgba(184,177,166,.55);--gold:#C9A96E;--line:rgba(184,177,166,.16);--line-2:rgba(184,177,166,.30);--green:#5BB98C;--amber:#D9B36A;--red:#E0917E;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Schibsted Grotesk",system-ui,sans-serif;line-height:1.55;font-size:15px;}
+  a{color:var(--gold);}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(15,15,16,.9);backdrop-filter:blur(10px);z-index:10;}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;}
+  .logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(150deg,#26221b,#0F0F10);border:1px solid var(--line-2);display:grid;place-items:center;}
+  .logo svg{width:17px;height:17px;}
+  .wrap{max-width:1140px;margin:0 auto;padding:22px;}
+  button,.btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);padding:9px 15px;cursor:pointer;transition:.15s;}
+  button:hover{border-color:var(--gold);}
+  .btn-gold{background:var(--gold);color:#0F0F10;border-color:var(--gold);}
+  .btn-ghost{background:transparent;}
+  .btn-red{color:var(--red);border-color:rgba(224,145,126,.4);}
+  input,textarea,select{width:100%;font-family:inherit;font-size:14.5px;color:var(--text);background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:11px 13px;outline:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+  textarea{resize:vertical;line-height:1.6;}
+  label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;}
+  .field{margin-bottom:15px;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;}
+  .muted{color:var(--muted);} .small{font-size:12.5px;}
+  .hidden{display:none!important;}
+  /* login */
+  .login{max-width:380px;margin:9vh auto;padding:0 22px;}
+  .login h1{font-size:24px;font-weight:800;margin:0 0 4px;}
+  /* list */
+  .plist{display:flex;flex-direction:column;gap:10px;}
+  .pitem{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  .pitem:hover{border-color:var(--line-2);}
+  .pitem .em{font-size:22px;}
+  .pitem .ttl{flex:1;min-width:0;}
+  .pitem .ttl b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pitem .ttl span{font-size:12px;color:var(--faint);}
+  .badge{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:100px;}
+  .badge.pub{color:#0F0F10;background:var(--green);}
+  .badge.draft{color:var(--amber);border:1px solid rgba(217,179,106,.4);}
+  .ico{padding:7px 10px;font-size:13px;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--gold);color:var(--text);padding:11px 18px;border-radius:12px;font-weight:600;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+  .preview{border:1px solid var(--line);border-radius:12px;padding:16px 18px;max-height:340px;overflow:auto;background:var(--bg);}
+  .preview h1,.preview h2,.preview h3{letter-spacing:-.02em;} .preview a{color:var(--gold);}
+  .err{color:var(--red);font-size:13px;margin-top:8px;min-height:18px;}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;}.row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login">
+  <div class="brand" style="margin-bottom:22px"><span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 5l8 6.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10.5V19h12v-8.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19v-4h4v4" stroke="#F7F3EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Lyvo Admin</div>
+  <div class="card">
+    <h1>Sign in</h1>
+    <p class="muted small" style="margin:0 0 18px">Admin access only.</p>
+    <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username" /></div>
+    <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" /></div>
+    <button class="btn-gold" id="signin" style="width:100%">Sign in</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <div class="top">
+    <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 5l8 6.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10.5V19h12v-8.5" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19v-4h4v4" stroke="#F7F3EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Blog Admin</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="index.html" class="btn btn-ghost" style="text-decoration:none">View blog ↗</a>
+      <button class="btn-gold" id="newPost">+ New post</button>
+      <button class="btn-ghost" id="signout">Sign out</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="grid">
+      <!-- LIST -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+          <h2 style="margin:0;font-size:18px">Posts</h2><span class="muted small" id="count"></span>
+        </div>
+        <div class="plist" id="plist"><p class="muted small">Loading…</p></div>
+      </div>
+      <!-- EDITOR -->
+      <div class="card" id="editor">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="margin:0;font-size:18px" id="edTitle">New post</h2>
+          <span class="badge draft" id="edStatus">Draft</span>
+        </div>
+        <div class="field"><label>Title</label><input id="f_title" placeholder="How to screen tenants in Namibia" /></div>
+        <div class="row">
+          <div class="field"><label>Slug (URL)</label><input id="f_slug" placeholder="how-to-screen-tenants" /></div>
+          <div class="field"><label>Category</label><input id="f_category" placeholder="For landlords" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Cover emoji</label><input id="f_emoji" placeholder="🔑" maxlength="4" /></div>
+          <div class="field"><label>Read time (min)</label><input id="f_read" type="number" min="1" value="5" /></div>
+        </div>
+        <div class="field"><label>Excerpt (card + lead)</label><textarea id="f_excerpt" rows="2" placeholder="One or two sentences that sell the article."></textarea></div>
+        <div class="field"><label>Meta description (SEO, ~155 chars)</label><textarea id="f_meta" rows="2" maxlength="180"></textarea></div>
+        <div class="field"><label>Body — HTML (use &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;&lt;li&gt;, &lt;strong&gt;, &lt;blockquote&gt;)</label><textarea id="f_body" rows="12" placeholder="&lt;h2&gt;Section&lt;/h2&gt;&#10;&lt;p&gt;Your text…&lt;/p&gt;"></textarea></div>
+        <details style="margin-bottom:14px"><summary class="muted small" style="cursor:pointer">Live preview</summary><div class="preview" id="preview" style="margin-top:10px"></div></details>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select id="f_status" style="width:auto"><option value="draft">Draft</option><option value="published">Published</option></select>
+          <button class="btn-gold" id="save">Save</button>
+          <button class="btn-ghost" id="clear">New / clear</button>
+          <button class="btn-red ico" id="del" style="margin-left:auto" title="Delete">🗑 Delete</button>
+        </div>
+        <div class="err" id="edErr"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const C=window.LYVO_CONFIG, sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+let currentId=null, slugTouched=false;
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+const slugify=s=>(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+
+// ---- auth ----
+async function gate(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){ show('login'); return; }
+  const {data:isAdmin,error}=await sb.rpc('is_admin');
+  if(error||!isAdmin){ $('loginErr').textContent='This account is not an admin.'; await sb.auth.signOut(); show('login'); return; }
+  show('app'); load();
+}
+function show(which){ $('login').classList.toggle('hidden',which!=='login'); $('app').classList.toggle('hidden',which!=='app'); }
+$('signin').onclick=async()=>{
+  $('loginErr').textContent='';
+  const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+  if(error){ $('loginErr').textContent=error.message; return; }
+  gate();
+};
+$('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('signin').click();});
+$('signout').onclick=async()=>{ await sb.auth.signOut(); location.reload(); };
+
+// ---- list ----
+async function load(){
+  const {data,error}=await sb.from('blog_posts').select('*').order('updated_at',{ascending:false});
+  const box=$('plist');
+  if(error){ box.innerHTML='<p class="err">'+esc(error.message)+'</p>'; return; }
+  $('count').textContent=(data.length||0)+' post'+(data.length===1?'':'s');
+  if(!data.length){ box.innerHTML='<p class="muted small">No posts yet. Click “New post” to write your first.</p>'; return; }
+  box.innerHTML=data.map(p=>`
+    <div class="pitem" data-id="${p.id}">
+      <span class="em">${esc(p.cover_emoji)||'📝'}</span>
+      <div class="ttl"><b>${esc(p.title)||'(untitled)'}</b><span>${esc(p.category)} · ${p.read_minutes||5} min · ${p.status==='published'?'pub '+fmt(p.published_at):'updated '+fmt(p.updated_at)}</span></div>
+      <span class="badge ${p.status==='published'?'pub':'draft'}">${p.status}</span>
+      <button class="ico edit" data-id="${p.id}">Edit</button>
+    </div>`).join('');
+  box.querySelectorAll('.edit').forEach(b=>b.onclick=()=>edit(data.find(x=>x.id===b.dataset.id)));
+  window.__posts=data;
+}
+
+// ---- editor ----
+function fill(p){
+  currentId=p?.id||null;
+  $('edTitle').textContent=p?'Edit post':'New post';
+  $('f_title').value=p?.title||''; $('f_slug').value=p?.slug||''; $('f_category').value=p?.category||'Article';
+  $('f_emoji').value=p?.cover_emoji||'📝'; $('f_read').value=p?.read_minutes||5;
+  $('f_excerpt').value=p?.excerpt||''; $('f_meta').value=p?.meta_description||''; $('f_body').value=p?.body_html||'';
+  $('f_status').value=p?.status||'draft';
+  slugTouched=!!p; $('edErr').textContent=''; renderStatus(); renderPreview();
+}
+function edit(p){ fill(p); window.scrollTo({top:0,behavior:'smooth'}); }
+function renderStatus(){ const s=$('f_status').value; const b=$('edStatus'); b.textContent=s; b.className='badge '+(s==='published'?'pub':'draft'); }
+function renderPreview(){ $('preview').innerHTML='<h1 style="margin-top:0">'+esc($('f_title').value)+'</h1>'+($('f_excerpt').value?'<p class="muted"><em>'+esc($('f_excerpt').value)+'</em></p>':'')+$('f_body').value; }
+$('f_title').addEventListener('input',()=>{ if(!slugTouched) $('f_slug').value=slugify($('f_title').value); renderPreview(); });
+$('f_slug').addEventListener('input',()=>{ slugTouched=true; $('f_slug').value=slugify($('f_slug').value); });
+$('f_body').addEventListener('input',renderPreview);
+$('f_excerpt').addEventListener('input',renderPreview);
+$('f_status').addEventListener('change',renderStatus);
+$('newPost').onclick=()=>fill(null);
+$('clear').onclick=()=>fill(null);
+
+$('save').onclick=async()=>{
+  $('edErr').textContent='';
+  const rec={
+    title:$('f_title').value.trim(), slug:slugify($('f_slug').value||$('f_title').value),
+    category:$('f_category').value.trim()||'Article', cover_emoji:$('f_emoji').value.trim()||'📝',
+    read_minutes:parseInt($('f_read').value)||5, excerpt:$('f_excerpt').value.trim(),
+    meta_description:$('f_meta').value.trim(), body_html:$('f_body').value, status:$('f_status').value
+  };
+  if(!rec.title){ $('edErr').textContent='Title is required.'; return; }
+  if(!rec.slug){ $('edErr').textContent='Slug is required.'; return; }
+  let res;
+  if(currentId) res=await sb.from('blog_posts').update(rec).eq('id',currentId).select().single();
+  else res=await sb.from('blog_posts').insert(rec).select().single();
+  if(res.error){ $('edErr').textContent=res.error.code==='23505'?'That slug is already used — pick another.':res.error.message; return; }
+  currentId=res.data.id; slugTouched=true;
+  toast(rec.status==='published'?'Published ✓':'Saved ✓'); load();
+};
+$('del').onclick=async()=>{
+  if(!currentId){ fill(null); return; }
+  if(!confirm('Delete this post permanently?')) return;
+  const {error}=await sb.from('blog_posts').delete().eq('id',currentId);
+  if(error){ $('edErr').textContent=error.message; return; }
+  toast('Deleted'); fill(null); load();
+};
+
+gate();
+</script>
+</body>
+</html>
