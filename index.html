@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e',HUBSPOT_PORTAL_ID:'148630856',HUBSPOT_FORM_GUID:'f446c790-4fd1-4daa-9126-8ce6996bfd27',HUBSPOT_REGION:'eu1',HUBSPOT_ROLE_FIELD:'waitlist_role'};</script>
+<script>window.LYVO_CONFIG={SUPABASE_URL:'https://mwxmzxbuyqfejjygdutz.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_a6ocubvLLPwwKSTEXIFzKg_rQawFt6e',HUBSPOT_PORTAL_ID:'148630856',HUBSPOT_FORM_GUID:'f446c790-4fd1-4daa-9126-8ce6996bfd27',HUBSPOT_REGION:'eu1',HUBSPOT_ROLE_FIELD:'your_era',HUBSPOT_ROLE_MAP:{landlord:'I own the place  🔑',tenant:'Just renting ✨'}};</script>
 <style>
   :root{
     --bg:#0F0F10; --surface:#1A1A1C; --surface-2:#212123;
@@ -224,7 +224,7 @@
       const fields=[{name:'email',value:email}];
       if(name) fields.push({name:'firstname',value:name});
       if(city) fields.push({name:'city',value:city});
-      if(c.HUBSPOT_ROLE_FIELD && role) fields.push({name:c.HUBSPOT_ROLE_FIELD,value:role});
+      if(c.HUBSPOT_ROLE_FIELD && role) fields.push({name:c.HUBSPOT_ROLE_FIELD,value:(c.HUBSPOT_ROLE_MAP&&c.HUBSPOT_ROLE_MAP[role])||role});
       const host=(c.HUBSPOT_REGION && c.HUBSPOT_REGION!=='na1') ? 'api-'+c.HUBSPOT_REGION+'.hsforms.com' : 'api.hsforms.com';
       await fetch('https://'+host+'/submissions/v3/integration/submit/'+c.HUBSPOT_PORTAL_ID+'/'+c.HUBSPOT_FORM_GUID,{
         method:'POST',headers:{'Content-Type':'application/json'},
