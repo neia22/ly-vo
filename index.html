@@ -89,6 +89,13 @@
   .markets{display:flex;gap:10px 22px;justify-content:center;flex-wrap:wrap;font-weight:700;color:var(--text);margin:14px 0 22px;}
   .markets span{color:var(--muted);font-weight:600;}
   .tiny{font-size:12.5px;color:var(--faint);}
+  .ndinvite{max-width:560px;margin:0 auto 24px;text-align:center;background:linear-gradient(160deg,#1b1813,#121110);border:1px solid var(--line-2);border-radius:22px;padding:34px 30px;}
+  .nd-flag{font-size:42px;line-height:1;margin-bottom:12px;}
+  .nd-h{margin:0 0 10px;font-size:clamp(22px,3.4vw,30px);font-weight:800;letter-spacing:-.02em;color:var(--text);}
+  .nd-h .serif{color:var(--gold);}
+  .nd-sub{margin:0 auto 16px;max-width:44ch;color:var(--muted);font-size:14.5px;line-height:1.55;}
+  .nd-date{font-size:14px;font-weight:700;color:var(--muted);}
+  .nd-date a{color:var(--gold);text-decoration:none;}
   @media (max-width:780px){ .cols{grid-template-columns:1fr;} .core{grid-template-columns:1fr 1fr;} }
   @media (max-width:440px){ .roles,.grid2{grid-template-columns:1fr;} .core{grid-template-columns:1fr;} }
 </style>
@@ -189,8 +196,13 @@
   </section>
 
   <footer>
-    <div class="markets">launching in <span style="font-size:19px">🇳🇦</span> namibia first ✨</div>
-    <div class="tiny">© <span id="yr">2026</span> Lyvo. All rights reserved.</div>
+    <div class="ndinvite">
+      <div class="nd-flag">🇳🇦</div>
+      <h3 class="nd-h">namibia, this one’s for <span class="serif">you.</span></h3>
+      <p class="nd-sub">renting shouldn’t be this hard — so we’re fixing it at home first. windhoek to walvis bay, landlords to renters: come be one of the first in. 💛</p>
+      <div class="nd-date">doors open <strong style="color:var(--text)">july 3rd</strong> · <a href="#join">save your spot →</a></div>
+    </div>
+    <div class="tiny">© <span id="yr">2026</span> Lyvo. all rights reserved.</div>
   </footer>
 </div>
 
