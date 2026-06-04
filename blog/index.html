@@ -40,9 +40,9 @@
 
 <main class="wrap">
   <section class="blog-hero">
-    <div class="eyebrow">The Lyvo Blog</div>
-    <h1>Renting &amp; letting, <span class="serif">made clear.</span></h1>
-    <p>No-nonsense guides for landlords and tenants — screening, deposits, compliant leases and getting paid — written for <strong style="color:var(--text)">Namibia</strong> 🇳🇦.</p>
+    <div class="eyebrow">the lyvo blog</div>
+    <h1>renting &amp; letting, <span class="serif">decoded.</span></h1>
+    <p>your no-BS guides to renting, letting &amp; getting paid — screening, deposits, leases, all of it. written for <strong style="color:var(--text)">namibia</strong> 🇳🇦.</p>
   </section>
 
   <section class="posts" id="posts">
@@ -51,7 +51,7 @@
 </main>
 
 <footer class="site"><div class="foot-in">
-  <span>© <span id="yr">2026</span> Lyvo · Launching in Namibia 🇳🇦</span>
+  <span>© <span id="yr">2026</span> Lyvo · launching in namibia 🇳🇦</span>
   <span><a href="../#join">Join the waitlist →</a></span>
 </div></footer>
 
@@ -69,7 +69,7 @@ const fmt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'long
       .eq('status','published').order('published_at',{ascending:false});
     if(error) throw error;
     if(!data||!data.length){
-      box.innerHTML='<div class="empty"><div class="big">📝</div><h2>No articles yet</h2><p>We’re busy writing. Check back soon — or join the waitlist to hear first.</p></div>';
+      box.innerHTML='<div class="empty"><div class="big">✨</div><h2>nothing here yet</h2><p>we’re cooking up something good. check back soon — or join the waitlist to get it first.</p></div>';
       return;
     }
     box.innerHTML=data.map(p=>`
