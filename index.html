@@ -53,6 +53,13 @@
   .field{margin-bottom:11px;}
   .field input{width:100%;font:inherit;font-size:15px;padding:14px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);}
   .field input::placeholder{color:var(--faint);}
+  .email-field{position:relative;}
+  .email-field .email-tick{position:absolute;right:14px;top:50%;transform:translateY(-50%) scale(.5);color:var(--green);font-weight:800;font-size:15px;opacity:0;transition:.18s;pointer-events:none;}
+  .email-field.ok input{border-color:var(--green);padding-right:38px;}
+  .email-field.ok .email-tick{opacity:1;transform:translateY(-50%) scale(1);}
+  .email-field.bad input{border-color:#E0917E;}
+  .email-hint{font-size:11.5px;color:#E0917E;margin:0 0 0 4px;max-height:0;opacity:0;overflow:hidden;transition:.16s;}
+  .email-hint.show{max-height:22px;opacity:1;margin:2px 0 9px 4px;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
   .btn{font:inherit;font-weight:800;font-size:15px;border:0;border-radius:13px;padding:15px;cursor:pointer;width:100%;background:var(--gold);color:#0F0F10;transition:.15s;}
   .btn:hover{background:var(--gold-deep);}
@@ -142,7 +149,11 @@
         <div class="rt">I’m renting</div><div class="rs">Find your place, your era</div>
       </button>
     </div>
-    <div class="field"><input id="w_email" type="email" placeholder="Your email" autocomplete="email"></div>
+    <div class="field email-field">
+      <input id="w_email" type="email" placeholder="Your email" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email">
+      <span class="email-tick" aria-hidden="true">✓</span>
+    </div>
+    <div class="email-hint" id="email-hint"></div>
     <div class="grid2">
       <div class="field"><input id="w_name" placeholder="First name (optional)"></div>
       <div class="field"><input id="w_country" placeholder="Your country (optional)"></div>
@@ -205,13 +216,26 @@
     document.getElementById('role-tenant').classList.toggle('sel', r==='tenant');
   }
   function valid(email){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email); }
+  function setEmailState(showError){
+    const inp=document.getElementById('w_email'); if(!inp) return;
+    const fld=inp.closest('.email-field'); const hint=document.getElementById('email-hint');
+    const v=inp.value.trim();
+    if(!v){ fld.classList.remove('ok','bad'); hint.classList.remove('show'); return; }
+    if(valid(v)){ fld.classList.add('ok'); fld.classList.remove('bad'); hint.classList.remove('show'); }
+    else { fld.classList.remove('ok'); if(showError){ fld.classList.add('bad'); hint.textContent='Hmm, that doesn’t look like a valid email.'; hint.classList.add('show'); } }
+  }
+  (function(){ const inp=document.getElementById('w_email'); if(!inp) return;
+    inp.addEventListener('input', function(){ setEmailState(false); });
+    inp.addEventListener('blur', function(){ setEmailState(true); });
+    inp.addEventListener('focus', function(){ const f=inp.closest('.email-field'); if(f) f.classList.remove('bad'); const h=document.getElementById('email-hint'); if(h) h.classList.remove('show'); });
+  })();
   async function joinWaitlist(){
     const email=document.getElementById('w_email').value.trim();
     const name=document.getElementById('w_name').value.trim();
     const country=document.getElementById('w_country').value.trim();
     const btn=document.getElementById('w_btn');
     if(!role){ flash('Pick landlord or renter first 💕'); return; }
-    if(!valid(email)){ flash('Hmm, that email looks off'); return; }
+    if(!valid(email)){ setEmailState(true); document.getElementById('w_email').focus(); return; }
     btn.disabled=true; btn.textContent='Adding you…';
     const { error } = await sb.from('waitlist').insert({ email, role, full_name:name||null, country:country||null });
     if(error && error.code!=='23505'){ btn.disabled=false; btn.textContent='Count me in ✨'; flash(error.message); return; }
@@ -233,7 +257,7 @@
       });
     }catch(e){ console.warn('hubspot submit skipped',e); }
   }
-  function flash(msg){ const b=document.getElementById('w_btn'); b.textContent=msg; setTimeout(()=>{ if(b.textContent===msg) b.textContent='count me in ✨'; },2200); }
+  function flash(msg){ const b=document.getElementById('w_btn'); b.textContent=msg; setTimeout(()=>{ if(b.textContent===msg) b.textContent='Count me in ✨'; },2200); }
   function success(email, r, already){
     document.getElementById('join').innerHTML =
       '<div class="ok"><div class="check">✓</div>'+
