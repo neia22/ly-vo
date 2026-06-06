@@ -7,30 +7,30 @@
     </radialGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect x="0" y="0" width="1200" height="6" fill="#C9A96E"/>
+  <rect width="1200" height="6" fill="#C9A96E"/>
 
   <!-- logo lockup -->
-  <g transform="translate(90,78)">
+  <g transform="translate(90,76)">
     <rect width="60" height="60" rx="15" fill="#1A1A1C" stroke="#C9A96E" stroke-opacity="0.35"/>
     <g transform="translate(13,15)" fill="none" stroke="#C9A96E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
       <path d="M2 13 17 2l15 11"/>
       <path d="M5 11v18h24V11"/>
     </g>
-    <path d="M25 44v-9h8v9" transform="translate(0,0)" fill="none" stroke="#F7F3EB" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M25 44v-9h8v9" fill="none" stroke="#F7F3EB" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="78" y="42" font-family="Helvetica, Arial, sans-serif" font-size="38" font-weight="800" fill="#F7F3EB" letter-spacing="-1">Lyvo</text>
   </g>
 
   <!-- headline -->
-  <text x="88" y="300" font-family="Helvetica, Arial, sans-serif" font-size="82" font-weight="800" fill="#F7F3EB" letter-spacing="-3">Property, the way</text>
-  <text x="88" y="392" font-family="Helvetica, Arial, sans-serif" font-size="82" font-weight="800" fill="#F7F3EB" letter-spacing="-3">it <tspan font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="400" fill="#C9A96E">should feel.</tspan></text>
+  <text x="88" y="300" font-family="Helvetica, Arial, sans-serif" font-size="80" font-weight="800" fill="#F7F3EB" letter-spacing="-3">Renting, but make it</text>
+  <text x="88" y="398" font-family="'Courier New', monospace" font-size="74" font-weight="700" fill="#C9A96E" letter-spacing="-2">effortless.</text>
 
   <!-- subline -->
-  <text x="90" y="462" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="#B8B1A6">List · screen · lease · collect rent · finance — one platform.</text>
+  <text x="90" y="466" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#B8B1A6">A better way to rent — for both sides of the lease.</text>
 
   <!-- badge -->
-  <g transform="translate(90,512)">
-    <rect width="404" height="50" rx="25" fill="#1A1A1C" stroke="#C9A96E" stroke-opacity="0.55"/>
+  <g transform="translate(90,516)">
+    <rect width="470" height="50" rx="25" fill="#1A1A1C" stroke="#C9A96E" stroke-opacity="0.55"/>
     <circle cx="30" cy="25" r="6" fill="#5BB98C"/>
-    <text x="52" y="33" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#C9A96E" letter-spacing="2.5">COMING SOON · NAMIBIA 🇳🇦</text>
+    <text x="52" y="33" font-family="'Courier New', monospace" font-size="19" font-weight="700" fill="#C9A96E" letter-spacing="1.4">LAUNCHING JULY 3RD · NAMIBIA 🇳🇦</text>
   </g>
 </svg>
